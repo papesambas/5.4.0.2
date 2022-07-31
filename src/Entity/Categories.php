@@ -27,9 +27,21 @@ class Categories
     #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Publications::class, orphanRemoval: true)]
     private Collection $publications;
 
+    #[ORM\Column(length: 15)]
+    private ?string $couleur = null;
+
+    #[ORM\ManyToMany(targetEntity: Niveaux::class, inversedBy: 'categories')]
+    private Collection $niveau;
+
     public function __construct()
     {
         $this->publications = new ArrayCollection();
+        $this->niveau = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->nom;
     }
 
     public function getId(): ?int
@@ -99,6 +111,42 @@ class Categories
                 $publication->setCategorie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCouleur(): ?string
+    {
+        return $this->couleur;
+    }
+
+    public function setCouleur(string $couleur): self
+    {
+        $this->couleur = $couleur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Niveaux>
+     */
+    public function getNiveau(): Collection
+    {
+        return $this->niveau;
+    }
+
+    public function addNiveau(Niveaux $niveau): self
+    {
+        if (!$this->niveau->contains($niveau)) {
+            $this->niveau->add($niveau);
+        }
+
+        return $this;
+    }
+
+    public function removeNiveau(Niveaux $niveau): self
+    {
+        $this->niveau->removeElement($niveau);
 
         return $this;
     }
